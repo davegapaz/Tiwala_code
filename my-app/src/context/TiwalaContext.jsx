@@ -1,24 +1,58 @@
 "use client";
 
 // Context for managing demo user state and Tiwala app data
-import React, { createContext, useContext, useReducer, useEffect } from 'react';
-import { demoUsers } from '@/data/demo-users';
+import React, { createContext, useContext, useReducer, useEffect, useMemo } from 'react';
+// import { demoUsers } from '@/data/demo-users';
 import { useToast } from '@/hooks/use-toast';
 import { tagalogStrings } from '@/data/tagalog-strings';
 
 
 const initialState = {
   currentUser: null,
-  users: demoUsers,
+  users: [],
+  isLoading: true,
+  error: null, 
   notifications: []
 };
 
 function tiwalaReducer(state, action) {
   switch (action.type) {
+    case 'FETCH_USERS_START':
+      return { ...state, isLoading: true, error: null };
+    case 'FETCH_USERS_SUCCESS':
+      return { ...state, isLoading: false, users: action.payload };
+    case 'FETCH_USERS_FAILURE':
+      return { ...state, isLoading: false, error: action.payload };
+
+    case 'SET_FARMERS':
+      return { ...state, users: action.payload };
+
     case 'SET_CURRENT_USER':
       const user = state.users.find(u => u.id === action.payload);
       return { ...state, currentUser: user || null };
-      
+    
+    case "UPDATE_TIWALA_INDEX":
+      return {
+        ...state,
+        users: state.users.map(u =>
+          u.id === action.userId
+            ? {
+                ...u,
+                tiwalaIndex: u.tiwalaIndex + action.amount,
+                history: [
+                  ...(u.history || []),
+                  {
+                    date: new Date().toISOString(),
+                    change: action.amount,
+                    reason: action.reason,
+                  },
+                ],
+              }
+            : u
+        ),
+      };
+
+  
     case 'ADD_REFERRAL':
   const newReferral = {
         ...action.payload.referral,
@@ -59,12 +93,34 @@ function tiwalaReducer(state, action) {
         ...state,
         users: state.users.map(user =>
           user.id === action.payload.userId
-            ? { ...user, tiwalaIndex: Math.max(0, user.tiwalaIndex + action.payload.change) }
+            ? {
+                ...user,
+                tiwalaIndex: Math.max(0, user.tiwalaIndex + action.payload.change),
+                history: [
+                  ...(user.history || []),
+                  {
+                    date: new Date().toISOString(),
+                    change: action.payload.change,
+                    reason: action.payload.reason,
+                  },
+                ],
+              }
             : user
         ),
         currentUser: state.currentUser?.id === action.payload.userId
-          ? { ...state.currentUser, tiwalaIndex: Math.max(0, state.currentUser.tiwalaIndex + action.payload.change) }
-          : state.currentUser
+          ? {
+              ...state.currentUser,
+              tiwalaIndex: Math.max(0, state.currentUser.tiwalaIndex + action.payload.change),
+              history: [
+                ...(state.currentUser.history || []),
+                {
+                  date: new Date().toISOString(),
+                  change: action.payload.change,
+                  reason: action.payload.reason,
+                },
+              ],
+            }
+          : state.currentUser,
       };
       
     case 'TRIGGER_SUPPORT_REQUEST':
@@ -107,8 +163,26 @@ export function TiwalaProvider({ children }) {
   const [state, dispatch] = useReducer(tiwalaReducer, initialState);
   const { toast } = useToast();
   
-  const actions = {
-  setCurrentUser: (userId) => {
+  const actions = useMemo(()=> ({
+    setUsers: (users) => {
+      dispatch({ type: 'SET_USERS', payload: users });
+    },
+
+    loadUsers: async () => {
+      dispatch({ type: 'FETCH_USERS_START' });
+      try {
+        const response = await fetch('/api/getFarmers');
+        if (!response.ok) {
+          throw new Error('Could not fetch farmer data from API.');
+        }
+        const data = await response.json();
+        dispatch({ type: 'FETCH_USERS_SUCCESS', payload: data });
+      } catch (err) {
+        dispatch({ type: 'FETCH_USERS_FAILURE', payload: err.message });
+      }
+    },
+
+    setCurrentUser: (userId) => {
       dispatch({ type: 'SET_CURRENT_USER', payload: userId });
     },
     
@@ -127,8 +201,12 @@ export function TiwalaProvider({ children }) {
     },
     
   updateTiwalaIndex: (change, reason) => {
-      if (!state.currentUser) return;
-      
+      if (!state.currentUser) {
+        console.log("❌ No currentUser in state");
+        return;
+      }
+      console.log("updatetiwalaIndex called with: ", change, reason)
+
       dispatch({
         type: 'UPDATE_TIWALA_INDEX',
         payload: { userId: state.currentUser.id, change, reason }
@@ -169,7 +247,7 @@ export function TiwalaProvider({ children }) {
         payload: notificationId
       });
     }
-  };
+  }), [toast]);
   
   return (
     <TiwalaContext.Provider value={{ state, dispatch, actions }}>

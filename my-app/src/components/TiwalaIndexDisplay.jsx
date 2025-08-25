@@ -60,7 +60,7 @@ export function TiwalaIndexDisplay({ user, showAnimation = true }) {
         </div>
           
         {/* Modern Progress Bar */}
-        {user.tiwalaIndex < 850 && (
+        {user.tiwalaIndex < 999 && (
           <div className="space-y-3">
             <div className="flex justify-between text-sm text-foreground-muted font-poppins">
               <span>Progreso sa susunod na antas</span>
@@ -80,7 +80,7 @@ export function TiwalaIndexDisplay({ user, showAnimation = true }) {
           </div>
         )}
           
-        {/* Modern Stats Grid */}
+        {/* Modern Stats Grid
         <div className="grid grid-cols-3 gap-4 pt-4 border-t border-border/50">
           <div className="text-center p-3 bg-gradient-to-br from-tiwala-green/10 to-tiwala-green/5 rounded-xl">
             <div className="text-xl font-bold text-tiwala-green font-poppins">
@@ -108,7 +108,7 @@ export function TiwalaIndexDisplay({ user, showAnimation = true }) {
               Ngayong buwan
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );

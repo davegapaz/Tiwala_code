@@ -1,21 +1,26 @@
-// src/app/layout.jsx
+// src/app/layout.js
+
+import { Inter } from "next/font/google";
 import "./globals.css";
-import { Toaster } from "@/components/ui/toaster";
-import Providers from "@/components/Providers";
+import { TiwalaProvider } from "@/context/TiwalaContext"; // Import your provider
+import { Toaster } from "@/components/ui/toaster"; // Import the Toaster for notifications
+
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
   title: "Tiwala App",
-  description: "Trust Engine Dashboard",
+  description: "Community Lending Platform",
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body>
-        <Providers>
+      <body className={inter.className}>
+        {/* Wrap the entire application with the TiwalaProvider */}
+        <TiwalaProvider>
           {children}
-          <Toaster /> {/* ✅ Client Component rendered safely */}
-        </Providers>
+          <Toaster /> {/* The Toaster should be inside the provider */}
+        </TiwalaProvider>
       </body>
     </html>
   );

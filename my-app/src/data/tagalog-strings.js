@@ -50,9 +50,9 @@ export const tagalogStrings = {
     successMessage: "Na-send na ang invitation kay",
     
     // Requirements
-    requirementTitle: "Requirements para Maka-refer",
+    requirementTitle: "Requirements para makapag refer",
     requirement700: "Kailangan umabot sa level na Matatag (700) para maka-refer!",
-    monthlyLimit: "Pwede lang mag-refer ng 3 tao per month",
+    monthlyLimit: "Pwede lang mag-refer ng 3 tao kada buwan",
     
     // Relationships
     relationships: {

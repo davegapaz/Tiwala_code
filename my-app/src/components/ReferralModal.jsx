@@ -9,6 +9,7 @@ import { useTiwala } from '@/context/TiwalaContext';
 import { tagalogStrings } from '@/data/tagalog-strings';
 import { UserReferral } from '@/data/demo-users';
 import { UserPlus, Sparkles } from 'lucide-react';
+import { ref } from 'process';
 
 
 // Removed TypeScript interfaces and types
@@ -25,7 +26,6 @@ export function ReferralModal({ open, onOpenChange }) {
   const user = state.currentUser;
   if (!user) return null;
   
-  const canRefer = user.tiwalaIndex >= 700 && user.monthlyReferrals < 3;
   
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -60,7 +60,8 @@ export function ReferralModal({ open, onOpenChange }) {
   const handleInputChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
-  
+  const referralsThisMonth = user.monthlyReferrals || 0;
+  const canRefer = user.tiwalaIndex >= 700 && referralsThisMonth < 3;
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-xs sm:max-w-sm mx-auto rounded-lg">
@@ -84,7 +85,7 @@ export function ReferralModal({ open, onOpenChange }) {
                 {user.tiwalaIndex < 700 && (
                   <li>• {tagalogStrings.referral.requirement700}</li>
                 )}
-                {user.monthlyReferrals >= 3 && (
+                {referralsThisMonth >= 3 && (
                   <li>• Naabot na ang 3 referrals ngayong buwan</li>
                 )}
                 <li>• {tagalogStrings.referral.monthlyLimit}</li>

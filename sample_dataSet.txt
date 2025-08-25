@@ -1,0 +1,89 @@
+// --- Delete existing data if there is ---
+MATCH (n) DETACH DELETE n;
+
+// --- CREATE 50 FARMER NODES ---
+CREATE
+  (:Farmer {id: 'f01', name: 'Maria Santos', profileImage: '👩‍🌾', location: 'Nueva Ecija'}),
+  (:Farmer {id: 'f02', name: 'Juan dela Cruz', profileImage: '👨‍🌾', location: 'Pangasinan'}),
+  (:Farmer {id: 'f03', name: 'Carlos Mendoza', profileImage: '👨‍💼', location: 'Bulacan'}),
+  (:Farmer {id: 'f04', name: 'Ana Reyes', profileImage: '👩‍💼', location: 'Bataan'}),
+  (:Farmer {id: 'f05', name: 'Rosa Cruz', profileImage: '👩‍🌾', location: 'Laguna'}),
+  (:Farmer {id: 'f06', name: 'Pedro Ramos', profileImage: '👨‍🔧', location: 'Laguna'}),
+  (:Farmer {id: 'f07', name: 'Luis Mercado', age: 55, address: 'Victoria, Laguna'}),
+  (:Farmer {id: 'f08', name: 'Isabella Tan', age: 33, address: 'Los Baños, Laguna'}),
+  (:Farmer {id: 'f09', name: 'Carlos Gomez', age: 48, address: 'Bay, Laguna'}),
+  (:Farmer {id: 'f10', name: 'Ana Lim', age: 30, address: 'Calamba, Laguna'}),
+  (:Farmer {id: 'f11', name: 'David Lee', age: 42, address: 'Pila, Laguna'}),
+  (:Farmer {id: 'f12', name: 'Grace Bautista', age: 36, address: 'Los Baños, Laguna'}),
+  (:Farmer {id: 'f13', name: 'Henry Sy', age: 58, address: 'Calauan, Laguna'}),
+  (:Farmer {id: 'f14', name: 'Ivy Villanueva', age: 28, address: 'Victoria, Laguna'}),
+  (:Farmer {id: 'f15', name: 'Jack Mendoza', age: 49, address: 'Bay, Laguna'}),
+  (:Farmer {id: 'f16', name: 'Karen Navarro', age: 31, address: 'Calamba, Laguna'}),
+  (:Farmer {id: 'f17', name: 'Leo Ocampo', age: 51, address: 'Pila, Laguna'}),
+  (:Farmer {id: 'f18', name: 'Mia Flores', age: 27, address: 'Los Baños, Laguna'}),
+  (:Farmer {id: 'f19', name: 'Nathaniel Perez', age: 46, address: 'Calauan, Laguna'}),
+  (:Farmer {id: 'f20', name: 'Olivia Ramos', age: 39, address: 'Victoria, Laguna'}),
+  (:Farmer {id: 'f21', name: 'Pedro Aquino', age: 60, address: 'Bay, Laguna'}),
+  (:Farmer {id: 'f22', name: 'Queenie Castillo', age: 25, address: 'Calamba, Laguna'}),
+  (:Farmer {id: 'f23', name: 'Robert Diaz', age: 43, address: 'Pila, Laguna'}),
+  (:Farmer {id: 'f24', name: 'Samantha Tolentino', age: 34, address: 'Los Baños, Laguna'}),
+  (:Farmer {id: 'f25', name: 'Thomas Yap', age: 53, address: 'Calauan, Laguna'}),
+  (:Farmer {id: 'f26', name: 'Ursula Ignacio', age: 32, address: 'Victoria, Laguna'}),
+  (:Farmer {id: 'f27', name: 'Victor Fernandez', age: 47, address: 'Bay, Laguna'}),
+  (:Farmer {id: 'f28', name: 'Winnie Gonzales', age: 29, address: 'Calamba, Laguna'}),
+  (:Farmer {id: 'f29', name: 'Xavier Jimenez', age: 56, address: 'Pila, Laguna'}),
+  (:Farmer {id: 'f30', name: 'Yara Lopez', age: 26, address: 'Los Baños, Laguna'}),
+  (:Farmer {id: 'f31', name: 'Zandro Marquez', age: 41, address: 'Calauan, Laguna'}),
+  (:Farmer {id: 'f32', name: 'Angela Bonifacio', age: 37, address: 'Victoria, Laguna'}),
+  (:Farmer {id: 'f33', name: 'Benjamin Corpuz', age: 54, address: 'Bay, Laguna'}),
+  (:Farmer {id: 'f34', name: 'Catherine David', age: 30, address: 'Calamba, Laguna'}),
+  (:Farmer {id: 'f35', name: 'Daniel Enriquez', age: 48, address: 'Pila, Laguna'}),
+  (:Farmer {id: 'f36', name: 'Erica Ferrer', age: 28, address: 'Los Baños, Laguna'}),
+  (:Farmer {id: 'f37', name: 'Franco Garcia', age: 50, address: 'Calauan, Laguna'}),
+  (:Farmer {id: 'f38', name: 'Gloria Hernandez', age: 59, address: 'Victoria, Laguna'}),
+  (:Farmer {id: 'f39', name: 'Hector Imperial', age: 44, address: 'Bay, Laguna'}),
+  (:Farmer {id: 'f40', name: 'Janine Francisco', age: 33, address: 'Calamba, Laguna'}),
+  (:Farmer {id: 'f41', name: 'Kevin Laurel', age: 29, address: 'Pila, Laguna'}),
+  (:Farmer {id: 'f42', name: 'Laura Madrigal', age: 38, address: 'Los Baños, Laguna'}),
+  (:Farmer {id: 'f43', name: 'Miguel Noble', age: 52, address: 'Calauan, Laguna'}),
+  (:Farmer {id: 'f44', name: 'Nina Orteza', age: 27, address: 'Victoria, Laguna'}),
+  (:Farmer {id: 'f45', name: 'Oscar Pacheco', age: 46, address: 'Bay, Laguna'}),
+  (:Farmer {id: 'f46', name: 'Patricia Quizon', age: 31, address: 'Calamba, Laguna'}),
+  (:Farmer {id: 'f47', name: 'Rafael Recto', age: 55, address: 'Pila, Laguna'}),
+  (:Farmer {id: 'f48', name: 'Stella Sison', age: 35, address: 'Los Baños, Laguna'}),
+  (:Farmer {id: 'f49', name: 'Tito Torralba', age: 49, address: 'Calauan, Laguna'}),
+  (:Farmer {id: 'f50', name: 'Vanessa Umali', age: 32, address: 'Victoria, Laguna'});
+
+// --- PAYMENT HISTORIES ---
+MATCH (f:Farmer {id: 'f01'}) FOREACH (i IN range(1, 22) | CREATE (f)-[:PAID_ON_TIME]->(:Payment));
+MATCH (f:Farmer {id: 'f01'}) CREATE (f)-[:PAID_LATE]->(:Payment);
+MATCH (f:Farmer {id: 'f02'}) FOREACH (i IN range(1, 13) | CREATE (f)-[:PAID_ON_TIME]->(:Payment));
+MATCH (f:Farmer {id: 'f02'}) FOREACH (i IN range(1, 2) | CREATE (f)-[:PAID_LATE]->(:Payment));
+MATCH (f:Farmer {id: 'f03'}) FOREACH (i IN range(1, 8) | CREATE (f)-[:PAID_ON_TIME]->(:Payment));
+MATCH (f:Farmer {id: 'f03'}) FOREACH (i IN range(1, 5) | CREATE (f)-[:PAID_LATE]->(:Payment));
+MATCH (f:Farmer {id: 'f04'}) FOREACH (i IN range(1, 18) | CREATE (f)-[:PAID_ON_TIME]->(:Payment));
+MATCH (f:Farmer {id: 'f08'}) FOREACH (i IN range(1,10) | CREATE (f)-[:PAID_ON_TIME]->(:Payment));
+MATCH (f:Farmer {id: 'f12'}) FOREACH (i IN range(1,8) | CREATE (f)-[:PAID_ON_TIME]->(:Payment));
+MATCH (f:Farmer {id: 'f17'}) FOREACH (i IN range(1,5) | CREATE (f)-[:PAID_LATE]->(:Payment));
+MATCH (f:Farmer {id: 'f24'}) FOREACH (i IN range(1,12) | CREATE (f)-[:PAID_ON_TIME]->(:Payment));
+MATCH (f:Farmer {id: 'f25'}) FOREACH (i IN range(1,4) | CREATE (f)-[:PAID_LATE]->(:Payment));
+MATCH (f:Farmer {id: 'f32'}) FOREACH (i IN range(1,6) | CREATE (f)-[:PAID_ON_TIME]->(:Payment));
+MATCH (f:Farmer {id: 'f32'}) CREATE (f)-[:PAID_LATE]->(:Payment);
+
+// --- REFERRAL RELATIONSHIPS ---
+MATCH (a:Farmer {id: 'f01'}), (b:Farmer {id: 'f04'}) CREATE (a)-[:REFERRED]->(b);
+MATCH (a:Farmer {id: 'f01'}), (b:Farmer {id: 'f05'}) CREATE (a)-[:REFERRED]->(b);
+MATCH (a:Farmer {id: 'f01'}), (b:Farmer {id: 'f08'}) CREATE (a)-[:REFERRED]->(b);
+MATCH (a:Farmer {id: 'f02'}), (b:Farmer {id: 'f06'}) CREATE (a)-[:REFERRED]->(b);
+MATCH (a:Farmer {id: 'f04'}), (b:Farmer {id: 'f12'}) CREATE (a)-[:REFERRED]->(b);
+MATCH (a:Farmer {id: 'f08'}), (b:Farmer {id: 'f18'}) CREATE (a)-[:REFERRED]->(b);
+MATCH (a:Farmer {id: 'f12'}), (b:Farmer {id: 'f24'}) CREATE (a)-[:REFERRED]->(b);
+MATCH (a:Farmer {id: 'f24'}), (b:Farmer {id: 'f32'}) CREATE (a)-[:REFERRED]->(b);
+
+// --- COMMUNITY SUPPORT RELATIONSHIPS ---
+MATCH (a:Farmer {id: 'f01'}), (b:Farmer {id: 'f03'}) CREATE (a)-[:SUPPORTED]->(b);
+MATCH (a:Farmer {id: 'f02'}), (b:Farmer {id: 'f17'}) CREATE (a)-[:SUPPORTED]->(b);
+MATCH (a:Farmer {id: 'f08'}), (b:Farmer {id: 'f03'}) CREATE (a)-[:SUPPORTED]->(b);
+MATCH (a:Farmer {id: 'f24'}), (b:Farmer {id: 'f25'}) CREATE (a)-[:SUPPORTED]->(b);
+MATCH (a:Farmer {id: 'f32'}), (b:Farmer {id: 'f02'}) CREATE (a)-[:SUPPORTED]->(b);
+MATCH (a:Farmer {id: 'f04'}), (b:Farmer {id: 'f06'}) CREATE (a)-[:SUPPORTED]->(b);

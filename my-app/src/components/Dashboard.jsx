@@ -1,5 +1,7 @@
-// Main dashboard component for Tiwala app
-import React, { useState } from 'react';
+// src/components/Dashboard.jsx
+
+import React, { useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation'; // Import useSearchParams
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -23,17 +25,36 @@ import {
 } from 'lucide-react';
 import heroImage from '@/assets/hero-rice-field.jpg';
 
-// Remove type alias and use string literals for view state
 export function Dashboard() {
   const { state, actions } = useTiwala();
   const [currentView, setCurrentView] = useState('home');
   const [showReferralModal, setShowReferralModal] = useState(false);
   const [supportUserId, setSupportUserId] = useState('');
   
-  if (!state.currentUser) return null;
+  // --- NEW LOGIC TO GET THE CORRECT USER ---
+  const searchParams = useSearchParams();
+  const userId = searchParams.get('id'); // Get the user ID from the URL (e.g., 'f01')
   
-  const user = state.currentUser;
-  const canRefer = user.tiwalaIndex >= 700 && user.monthlyReferrals < 3;
+
+  // If the user list is empty (e.g., on a hard refresh), load the data
+  useEffect(() => {
+    if (state.users.length === 0) {
+      actions.loadUsers();
+    }
+  }, [state.users.length, actions]);
+
+  // Find the user from the global list of users in the context
+  const user = state.users.find(u => u.id === userId);
+  console.log("user: ", user)
+  // If the global users list is empty, OR the specific user can't be found, show a loading state.
+  if (state.users.length === 0 || !user) {
+    return (
+      <div className="min-h-screen flex justify-center items-center text-xl">
+        Iniloload ang data ng user...
+      </div>
+    );
+  }
+  
   const unreadNotifications = state.notifications.filter(n => !n.read).length;
   
   const handleBack = () => {
@@ -55,6 +76,9 @@ export function Dashboard() {
       {tagalogStrings.ui.back}
     </Button>
   );
+  
+  // The rest of your component's JSX remains exactly the same.
+  // ... (paste the rest of your return statement here, starting from the first `if (currentView === 'community')`)
   
   // Render different views
   if (currentView === 'community') {
@@ -86,13 +110,14 @@ export function Dashboard() {
   if (currentView === 'onboarding') {
     return <OnboardingFlow onComplete={handleBack} />;
   }
-  
+  const referralsThisMonth = user.monthlyReferrals ?? 0;
+  const canRefer = user.tiwalaIndex >= 700 && referralsThisMonth < 3;
   return (
     <div className="min-h-screen bg-background-soft font-poppins">
       {/* Modern Header */}
       <div className="relative h-56 overflow-hidden">
         <img 
-          src={heroImage} 
+          src={heroImage.src} // Use .src for Next.js Image component imports
           alt="Rice Fields"
           className="w-full h-full object-cover"
         />
@@ -142,7 +167,7 @@ export function Dashboard() {
                 </h3>
                 <p className="text-xs text-foreground-muted font-poppins mt-1 leading-tight">
                   {canRefer 
-                    ? `Maaari pa kayong mag-refer ng ${3 - user.monthlyReferrals} tao ngayong buwan`
+                    ? `Maaari pa kayong mag-refer ng ${3 - (referralsThisMonth)} tao ngayong buwan`
                     : user.tiwalaIndex < 700 
                       ? tagalogStrings.referral.requirement700
                       : "Naabot na ang limitasyon ngayong buwan (3)"
@@ -199,6 +224,7 @@ export function Dashboard() {
               <Button 
                 onClick={() => setCurrentView('tips')}
                 className="btn-modern border border-tiwala-green text-tiwala-green hover:bg-tiwala-green hover:text-white bg-transparent text-[13px] px-2 py-1"
+                disabled={true}
               >
                 Basahin
               </Button>
@@ -213,14 +239,18 @@ export function Dashboard() {
             <h2 className="font-semibold text-lg font-poppins text-foreground">Mga Estadistika</h2>
           </div>
           
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-3 gap-3">
             <div className="text-center p-4 bg-gradient-to-br from-tiwala-green/10 to-tiwala-green/5 rounded-xl">
               <div className="text-2xl font-bold text-tiwala-green font-poppins">{user.onTimePayments}</div>
-              <div className="text-xs text-foreground-muted font-poppins mt-1">On-time na Bayad</div>
+              <div className="text-xs text-foreground-muted font-poppins mt-1">On-time Payment</div>
+            </div>
+            <div className="text-center p-4 bg-gradient-to-br from-destructive/10 to-destructive/5 rounded-xl">
+              <div className="text-2xl font-bold text-destructive font-poppins">{user.latePayments}</div>
+              <div className="text-xs text-foreground-muted font-poppins mt-1">Late Payment</div>
             </div>
             <div className="text-center p-4 bg-gradient-to-br from-tiwala-gold/10 to-tiwala-gold/5 rounded-xl">
-              <div className="text-2xl font-bold text-tiwala-gold font-poppins">{user.totalReferrals}</div>
-              <div className="text-xs text-foreground-muted font-poppins mt-1">Kabuuang Referral</div>
+              <div className="text-2xl font-bold text-tiwala-gold font-poppins">{user.directReferrals}</div>
+              <div className="text-xs text-foreground-muted font-poppins mt-1">Referrals</div>
             </div>
           </div>
         </div>

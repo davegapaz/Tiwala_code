@@ -26,30 +26,38 @@ export async function GET(request) {
 
   const session = driver.session();
   try {
+    // THIS QUERY NOW SPECIFICALLY SELECTS THE 4 DEMO FARMERS
     const cypherQuery = `
       MATCH (f:Farmer)
+      WHERE f.id IN ['f01', 'f02', 'f03', 'f04', 'f05']
+      OPTIONAL MATCH (f)-[:REFERRED]->(r:Farmer)
+      WITH f, collect(r { .id, .name, .profileImage, .location }) AS referrals
       RETURN
         f.id AS id,
         f.name AS name,
         f.profileImage AS profileImage,
         f.location AS location,
-        COUNT { (f)-[:REFERRED]->() } AS directReferrals,
+        size(referrals) AS directReferrals,
         COUNT { (f)-[:PAID_ON_TIME]->() } AS onTimePayments,
-        // This line correctly fetches the late payment count
-        COUNT { (f)-[:PAID_LATE]->() } AS latePayments
-      ORDER BY f.name
+        COUNT { (f)-[:PAID_LATE]->() } AS latePayments,
+        referrals
+      ORDER BY f.id
     `;
     const result = await session.run(cypherQuery);
     
-    // Convert Neo4j integers to standard numbers
     const farmersFromDb = result.records.map(record => {
         const farmer = record.toObject();
         return {
             ...farmer,
             directReferrals: farmer.directReferrals.low,
             onTimePayments: farmer.onTimePayments.low,
-            // This line correctly processes the late payment count
-            latePayments: farmer.latePayments.low
+            latePayments: farmer.latePayments.low,
+            referrals: farmer.referrals.map(ref => ({
+                id: ref.id,
+                name: ref.name,
+                profileImage: ref.profileImage,
+                location: ref.location
+            }))
         };
     });
 
@@ -58,10 +66,8 @@ export async function GET(request) {
         try {
           const response = await fetch(`http://127.0.0.1:5001/predict/${farmer.id}`);
           if (!response.ok) {
-            console.error(`Python API returned an error for ${farmer.id}: ${response.status}`);
             return { ...farmer, tiwalaIndex: 0, antas: 'Error' };
           }
-          
           const scoreData = await response.json();
           return {
             ...farmer,
@@ -69,7 +75,6 @@ export async function GET(request) {
             antas: calculateAntas(scoreData.tiwala_index),
           };
         } catch (error) {
-          console.error(`Failed to fetch from Python API for ${farmer.id}:`, error.message);
           return { ...farmer, tiwalaIndex: 0, antas: 'Error' };
         }
       })
@@ -78,7 +83,6 @@ export async function GET(request) {
     return Response.json(enrichedFarmers);
 
   } catch (error) {
-    console.error('Error in API route:', error);
     return Response.json({ error: 'Failed to fetch data.', details: error.message }, { status: 500 });
   } finally {
     await session.close();
