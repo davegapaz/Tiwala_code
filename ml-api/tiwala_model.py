@@ -2,7 +2,9 @@ import pandas as pd
 from neo4j import GraphDatabase
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import confusion_matrix, classification_report, roc_curve, auc, accuracy_score
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 # --- Connection Details ---
 URI = "bolt://localhost:7687"
@@ -38,7 +40,7 @@ def fetch_training_data(driver):
         result = session.run(query)
         return pd.DataFrame([record.data() for record in result])
     
-    
+
 def engineer_training_features(df):
     df['repayment_ratio'] = (df['ontime_payments'] / (df['ontime_payments'] + df['late_payments'])).fillna(0.5)
     df['community_ratio'] = (df['times_helped'] / (df['times_helped'] + df['times_received_help'])).fillna(0.5)
@@ -68,6 +70,35 @@ def train_model(driver):
         y_pred = model.predict(X_test)
         accuracy = accuracy_score(y_test, y_pred)
         print(f"Model trained with accuracy: {accuracy * 100:.2f}%")
+
+        # # --- Confusion Matrix ---
+        # cm = confusion_matrix(y_test, y_pred)
+        # plt.figure(figsize=(5,4))
+        # sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", xticklabels=["Unreliable","Reliable"], yticklabels=["Unreliable","Reliable"])
+        # plt.title("Confusion Matrix")
+        # plt.xlabel("Predicted")
+        # plt.ylabel("Actual")
+        # plt.show()
+
+        # --- Classification Report ---
+        # print("\nClassification Report:")
+        # print(classification_report(y_test, y_pred))
+
+        # --- ROC Curve ---
+        if len(set(y_test)) > 1:  # avoid error if only one class in test set
+            y_prob = model.predict_proba(X_test)[:,1]
+            fpr, tpr, _ = roc_curve(y_test, y_prob)
+            roc_auc = auc(fpr, tpr)
+
+            plt.figure(figsize=(5,4))
+            plt.plot(fpr, tpr, label=f"AUC = {roc_auc:.2f}")
+            plt.plot([0,1],[0,1],'--',color='gray')
+            plt.xlabel("False Positive Rate")
+            plt.ylabel("True Positive Rate")
+            plt.title("ROC Curve")
+            plt.legend()
+            plt.show()
+
 
     return model
 
